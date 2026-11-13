@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeñaTech | Lengua de Señas Argentina</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="scripts.js"></script>
+</head>
+
+<body>
+
+<header class="header">
+    <div class="logo">🤟 SeñaTech</div>
+    <span class="header-subtitle">Aprendé y practicá LSA</span>
+</header>
+
+<main class="main-container">
+
+    <section class="welcome">
+        <span class="eyebrow">LENGUA DE SEÑAS ARGENTINA</span>
+        <h1>Tu espacio para aprender señas</h1>
+        <p>Practicá el abecedario manual y descubrí cómo reconocer las letras con tu cámara.</p>
+    </section>
+
+    <section class="panel camera-panel">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">RECONOCIMIENTO</span>
+                <h2>Probá tus señas</h2>
+                <p>Mostrá tu mano frente a la cámara.</p>
+            </div>
+            <span class="status-pill" id="liveStatus">Cámara apagada</span>
+        </div>
+
+        <div class="camera-container">
+            <video id="video" autoplay playsinline muted></video>
+            <canvas id="canvas"></canvas>
+
+            <div class="camera-placeholder" id="cameraPlaceholder">
+                <div class="camera-icon">📷</div>
+                <h3>Tu cámara aparecerá acá</h3>
+                <p>Activá la cámara para comenzar a practicar.</p>
+            </div>
+        </div>
+
+        <div class="camera-buttons">
+            <button id="startCamera" class="button button-primary" type="button">
+                Activar cámara
+            </button>
+
+            <button id="stopCamera" class="button button-secondary" type="button">
+                Apagar cámara
+            </button>
+        </div>
+
+        <p id="cameraStatus" class="message" aria-live="polite">
+            Esperando que actives la cámara.
+        </p>
+
+        <div class="recognition-box">
+            <div>
+                <span class="eyebrow">LETRA RECONOCIDA</span>
+                <div id="prediction" class="prediction">?</div>
+                <p id="predictionMessage">Esperando una seña...</p>
+            </div>
+
+            <div class="confidence-area">
+                <span>Confianza</span>
+                <strong id="confidence">0%</strong>
+                <div class="confidence-track">
+                    <div id="confidenceBar"></div>
+                </div>
+            </div>
+        </div>
+
+        <button id="addPrediction" class="button button-primary full-width" type="button">
+            Agregar letra a mi palabra
+        </button>
+    </section>
+
+    <section class="panel training-panel">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">ENSEÑALE AL SISTEMA</span>
+                <h2>Entrenamiento de señas</h2>
+                <p>Elegí una letra y mostrá varias veces su seña.</p>
+            </div>
+        </div>
+
+        <div class="training-layout">
+            <div class="training-controls">
+                <label for="trainingLetter">Letra que vas a entrenar</label>
+
+                <select id="trainingLetter"></select>
+
+                <div class="selected-letter-box">
+                    <span>Letra seleccionada</span>
+                    <strong id="selectedLetter">A</strong>
+                </div>
+
+                <div class="sample-information">
+                    <div>
+                        <span>Ejemplos guardados</span>
+                        <strong id="sampleCount">0</strong>
+                    </div>
+
+                    <div class="progress-track">
+                        <div id="trainingProgress" class="progress-fill"></div>
+                    </div>
+                    <p>Se recomiendan al menos 8 ejemplos por letra.</p>
+                </div>
+
+                <button id="captureSample" class="button button-primary full-width" type="button">
+                    Guardar ejemplo de esta seña
+                </button>
+
+                <button id="deleteLetterSamples" class="button button-secondary full-width" type="button">
+                    Borrar ejemplos de esta letra
+                </button>
+
+                <p id="trainingStatus" class="message" aria-live="polite">
+                    Elegí una letra para comenzar.
+                </p>
+            </div>
+
+            <div class="training-info">
+                <h3>¿Cómo entrenar?</h3>
+                <ol>
+                    <li>Activá la cámara.</li>
+                    <li>Elegí una letra.</li>
+                    <li>Hacé la seña correspondiente.</li>
+                    <li>Presioná guardar ejemplo.</li>
+                    <li>Repetí el proceso desde distintos ángulos y posiciones.</li>
+                </ol>
+
+                <div class="info-note">
+                    <strong>Importante:</strong> el sistema aprende con los ejemplos que guardás.
+                    No tiene todas las señas aprendidas de fábrica.
+                </div>
+
+                <p id="trainingSummary">0 ejemplos guardados en total.</p>
+                <p id="classifierStatus">Faltan ejemplos de entrenamiento.</p>
+
+                <button id="clearAllTraining" class="button button-danger full-width" type="button">
+                    Borrar todos los entrenamientos
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel alphabet-panel">
+        <span class="eyebrow">ABECEDARIO</span>
+        <h2>Abecedario manual</h2>
+        <p>Elegí una letra para preparar su entrenamiento.</p>
+
+        <div class="info-note">
+            Las tarjetas sirven para seleccionar letras. No son imágenes de las señas.
+            Las letras que requieren movimiento necesitan reconocimiento temporal.
+        </div>
+
+        <div id="alphabetGrid"></div>
+    </section>
+
+    <section class="panel word-panel">
+        <span class="eyebrow">PRACTICÁ</span>
+        <h2>Armá tu palabra</h2>
+        <p>Agregá las letras reconocidas para formar palabras.</p>
+
+        <div id="wordOutput" class="word-output">
+            Tu palabra aparecerá acá...
+        </div>
+
+        <div class="word-buttons">
+            <button id="addSpace" class="button button-secondary" type="button">
+                Agregar espacio
+            </button>
+
+            <button id="deleteLast" class="button button-secondary" type="button">
+                Borrar última
+            </button>
+
+            <button id="clearWord" class="button button-danger" type="button">
+                Limpiar palabra
+            </button>
+        </div>
+    </section>
+
+    <footer>
+        <p>SeñaTech · Proyecto educativo de Lengua de Señas Argentina</p>
+    </footer>
+
+</main>
+
+</body>
+</html>
+
+
+
+
